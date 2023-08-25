@@ -1,0 +1,179 @@
+---
+openapi: 3.0.0
+info:
+  title: Brolli Application Flow OAuth2 Project
+  description: This is an example of using OAuth2 Application Flow in a specification to describe security to your API.
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/MANJUNATHNIMBAL/test/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: https://<<mule>>
+  description: SwaggerHub API Auto Mocking
+security:
+- application:
+  - read
+  - write
+paths:
+  /ping:
+    get:
+      summary: Server heartbeat operation
+      description: Heart beat function to check if the server is up and running.
+      responses:
+        "200":
+          description: OK
+      security: []
+  /price:
+    post:
+      summary: get indicative quote price
+      description: This is get price with request body
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/price'
+        required: true
+      responses:
+        "200":
+          description: OK
+components:
+  schemas:
+    price:
+      type: object
+      properties:
+        propertyDetails:
+          $ref: '#/components/schemas/propertyDetails'
+        propertyAddress:
+          $ref: '#/components/schemas/address'
+        calimsHistory:
+          $ref: '#/components/schemas/calimsHistory'
+        policyHolders:
+          type: array
+          items:
+            $ref: '#/components/schemas/policyHolder'
+    propertyDetails:
+      required:
+      - builtYear
+      - coverageType
+      - dwellingType
+      - occupancyType
+      - partner
+      - product
+      - propertyAddress
+      type: object
+      properties:
+        loggingId:
+          type: string
+          format: uuid
+        partner:
+          type: string
+          format: uuid
+        product:
+          type: array
+          items:
+            type: string
+            default: Landlord
+            enum:
+            - Home
+            - Landlord
+            - MyContents
+        dwellingType:
+          type: array
+          items:
+            type: string
+            example: "[\"Freestanding house\",\"Unit, flat or apartment\",\"Townhouse or villa\",\"Semi detached, duplex or terrace\",\"Caravan, mobile or relocatable home\",\"Triplex or fourplex\",\"Block of units, flats, or apartments\",\"Houseboat\",\"Shipping container or shed\"]"
+        occupancyType:
+          type: array
+          items:
+            type: string
+            example: "[\"Landord\",\"Formal Lease\"]"
+        strataTitle:
+          type: boolean
+        coverageType:
+          type: array
+          description: "If dwelling type = Freestanding house, and defaults to Building Only  OR If dwelling type = Townhouse or villa/Semi detached, duplex or terrace/ Triplex or fourplex, AND strata title = NO, and defaults to Building Only OR If dwelling type = Unit, flat or apartment AND If dwelling type = Townhouse or villa /Semi detached, duplex or terrace/ Triplex or fourplex, AND strata title = YES, and defaults to Contents Only"
+          items:
+            type: string
+            example: "[\"Contents Only\",\"Building Only\"]"
+        builtYear:
+          type: number
+          description: "example: 2010"
+        buildingAge:
+          type: number
+        numberOfStoreys:
+          type: number
+        wallType:
+          type: array
+          items:
+            type: string
+            example: "[\"that\",\"this\"]"
+        roofType:
+          type: array
+          items:
+            type: string
+            example: "[\"that\",\"this\"]"
+        swimmingPool:
+          type: array
+          description: Which of these outbuildings and other features does the property have?
+          items:
+            type: string
+            example: "[\"Pool or spa in-ground or with fixed decking\",\"Pool or spa relocatable above ground\"]"
+        starteOrTerritory:
+          type: string
+          description: Risk location
+        campaginCode:
+          type: string
+    address:
+      type: object
+      properties:
+        street:
+          type: string
+        street2:
+          type: string
+        state:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        postCode:
+          type: string
+    policyHolder:
+      type: object
+      properties:
+        policyHoldersAge:
+          maximum: 99
+          minimum: 18
+          type: number
+          default: 35
+    calimsHistory:
+      type: object
+      properties:
+        perilLastthreeyrs:
+          type: integer
+          description: "In the last 3 years, has anyone to be covered made any claim under a landlord insurance policy?"
+        perillastyear:
+          type: integer
+          description: "In the last year, has anyone to be covered made any claim under a landlord insurance policy?"
+      description: Time since claim is based on month & year collected.Time since claim = Renewal Effective Year & Month  -  Year & Month of claim
+    queAndAnswer:
+      type: object
+      properties:
+        que:
+          type: string
+        text:
+          type: string
+    Schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+  securitySchemes:
+    application:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: http://example.com/oauth/token
+          scopes:
+            write: allows modifying resources
+            read: allows reading resources
